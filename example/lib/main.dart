@@ -55,6 +55,36 @@ class _MyAppState extends State<MyApp> {
                         'Tap on a notification when it appears to trigger navigation'),
                   ),
                   new Padding(
+                    padding: new EdgeInsets.fromLTRB(0.0,0.0,0.0,8.0),
+                    child: new RaisedButton(
+                        color: Colors.red,
+                        child: new Text('Test Issue #88'),
+                        onPressed: () {
+                          _testIssue88(790,45).whenComplete((){
+                            _testIssue88(800,55);
+                            _testIssue88(12345,65);
+                            _testIssue88(12354,75);
+                            _testIssue88(12345678,85);
+                            _testIssue88(12345687,95);
+                          }).whenComplete(() async {
+                            print('Test scheduled');
+                            await Future.delayed(
+                                new Duration(seconds: 105));
+                            flutterLocalNotificationsPlugin.cancel(790);
+                            flutterLocalNotificationsPlugin.cancel(800);
+
+                            flutterLocalNotificationsPlugin.cancel(12345);
+                            flutterLocalNotificationsPlugin.cancel(12354);
+
+                            flutterLocalNotificationsPlugin.cancel(12345678);
+                            flutterLocalNotificationsPlugin.cancel(12345687);
+                          }).whenComplete((){
+                            print('Notifcations canceled');
+                          });
+                        }
+                    )
+                  ),
+                  new Padding(
                     padding: new EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 8.0),
                     child: new RaisedButton(
                       child: new Text('Show plain notification with payload'),
@@ -191,6 +221,31 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+
+
+
+  Future _testIssue88(int id, int minutes) async {
+    var scheduledNotificationDateTime =
+    new DateTime.now().add(new Duration(seconds: minutes));
+
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        'minutes notifcation',
+        'Scheduled Title',
+        'Test Issue 88',
+        color: const Color.fromARGB(255, 255, 0, 0));
+    var iOSPlatformChannelSpecifics =
+    new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.schedule(
+        id,
+        'scheduled title',
+        'Channel id - $id',
+        scheduledNotificationDateTime,
+        platformChannelSpecifics);
+  }
+
+
 
   Future _showNotification() async {
     var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
